@@ -21,8 +21,10 @@
 <body>
     <div id="app">
         <h1>Les Pilotes des 24 Heures du Mans</h1>
+        <input type="text" v-model="searchQuery" placeholder="Rechercher un pilote..." />
+
         <ul>
-            <li v-for="pilote in pilotes">
+            <li v-for="pilote in filteredPilotes">
                 <span class="date">{{ pilote.annee }}</span> -
                 <span class="author">{{ pilote.pilotes }}</span><br />
                 Équipe: <span>{{ pilote.equipe }}</span><br />
@@ -38,16 +40,29 @@
             data() {
                 return {
                     pilotes: [],
+                    searchQuery: ''
                 };
             },
             created() {
                 this.fetchData();
             },
+            computed: {
+                filteredPilotes() {
+                    if (this.searchQuery) {
+                        return this.pilotes.filter(pilote => 
+                            pilote.pilotes.toLowerCase().includes(this.searchQuery.toLowerCase())
+                        );
+                    }
+                    return this.pilotes;
+                }
+            },
+            
             methods: {
                 fetchData() {
                     fetch(apiURL)
                         .then(response => response.json())
                         .then(data => {
+                            console.log("Data from API:", data);
                             this.pilotes = data.results;
                         })
                         .catch(error => {
