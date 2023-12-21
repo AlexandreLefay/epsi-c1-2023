@@ -3,17 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Pilotes des 24 Heures du Mans</title>
+    <title>Les Gagants des 24 Heures du Mans</title>
     <style>
         body {
             font-family: "Helvetica", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
         }
-        li {
-            line-height: 1.5em;
-            margin-bottom: 20px;
+        #app {
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
         }
-        .author,
-        .date {
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .author, .date {
             font-weight: bold;
         }
     </style>
@@ -22,19 +36,23 @@
     <div id="app">
         <h1>Les Pilotes des 24 Heures du Mans</h1>
         <input type="text" v-model="searchQuery" placeholder="Rechercher un pilote..." />
-
-        <ul>
-            <li v-for="pilote in filteredPilotes">
-                <span class="date">{{ pilote.annee }}</span> -
-                <span class="author">{{ pilote.pilotes }}</span><br />
-                Équipe: <span>{{ pilote.equipe }}</span><br />
-                Voiture: <span>{{ pilote.voiture }}</span>
-            </li>
-        </ul>
+    
+        <div class="grid-container">
+            <div class="card" v-for="(group, annee) in groupedPilotes">
+                <h2>Année: {{ annee }}</h2>
+                <ul>
+                    <li v-for="pilote in group">
+                        <span class="author">{{ pilote.pilotes }}</span><br />
+                        Équipe: <span>{{ pilote.equipe }}</span><br />
+                        Voiture: <span>{{ pilote.voiture }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
     <script src="https://unpkg.com/vue@3"></script>
     <script>
-        const apiURL = "https://data.sarthe.fr/api/explore/v2.1/catalog/datasets/227200029_24-heures-du-mans-pilote/records?limit=20";
+        const apiURL = "https://data.sarthe.fr/api/explore/v2.1/catalog/datasets/227200029_24-heures-du-mans-pilote/records?limit=99";
 
         Vue.createApp({
             data() {
@@ -47,6 +65,17 @@
                 this.fetchData();
             },
             computed: {
+                groupedPilotes() {
+                    const groups = {};
+                    this.filteredPilotes.forEach(pilote => {
+                        if (!groups[pilote.annee]) {
+                            groups[pilote.annee] = [];
+                        }
+                        groups[pilote.annee].push(pilote);
+                    });
+                    console.log("Grouped Pilotes:", groups);
+                    return groups;
+                },
                 filteredPilotes() {
                     if (this.searchQuery) {
                         return this.pilotes.filter(pilote => 
@@ -56,7 +85,6 @@
                     return this.pilotes;
                 }
             },
-            
             methods: {
                 fetchData() {
                     fetch(apiURL)
