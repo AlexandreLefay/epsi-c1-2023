@@ -6,39 +6,56 @@
     <title>Les Pilotes des 24 Heures du Mans</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+            font-family: "Helvetica", Arial, sans-serif;
         }
-        .card {
-            margin: 10px auto;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            max-width: 300px;
+        li {
+            line-height: 1.5em;
+            margin-bottom: 20px;
+        }
+        .author,
+        .date {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div id="app">
         <h1>Les Pilotes des 24 Heures du Mans</h1>
-        <div class="card" v-for="pilote in pilotes" :key="pilote.id">
-            <h2>{{ pilote.nom }}</h2>
-            <p>{{ pilote.prenom }}</p>
-            <p>{{ pilote.voiture }}</p>
-        </div>
+        <ul>
+            <li v-for="pilote in pilotes">
+                <span class="date">{{ pilote.annee }}</span> -
+                <span class="author">{{ pilote.pilotes }}</span><br />
+                Équipe: <span>{{ pilote.equipe }}</span><br />
+                Voiture: <span>{{ pilote.voiture }}</span>
+            </li>
+        </ul>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue@3"></script>
     <script>
-        new Vue({
-            el: '#app',
-            data: {
-                pilotes: [
-                    { id: 1, nom: 'Pilote 1', prenom: 'Prénom 1', voiture: 'Voiture 1' },
-                    { id: 2, nom: 'Pilote 2', prenom: 'Prénom 2', voiture: 'Voiture 2' },
-                ]
+        const apiURL = "https://data.sarthe.fr/api/explore/v2.1/catalog/datasets/227200029_24-heures-du-mans-pilote/records?limit=20";
+
+        Vue.createApp({
+            data() {
+                return {
+                    pilotes: [],
+                };
+            },
+            created() {
+                this.fetchData();
+            },
+            methods: {
+                fetchData() {
+                    fetch(apiURL)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.pilotes = data.results;
+                        })
+                        .catch(error => {
+                            console.error('Erreur API:', error);
+                        });
+                }
             }
-        });
+        }).mount("#app");
     </script>
 </body>
 </html>
