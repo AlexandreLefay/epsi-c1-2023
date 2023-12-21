@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Pilotes des 24 Heures du Mans</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .card {
+            margin: 10px auto;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>Les Pilotes des 24 Heures du Mans</h1>
+        <div class="card" v-for="pilote in pilotes" :key="pilote.id">
+            <h2>{{ pilote.nom }}</h2>
+            <p>{{ pilote.prenom }}</p>
+            <p>{{ pilote.voiture }}</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                pilotes: [
+                    { id: 1, nom: 'Pilote 1', prenom: 'Prénom 1', voiture: 'Voiture 1' },
+                    { id: 2, nom: 'Pilote 2', prenom: 'Prénom 2', voiture: 'Voiture 2' },
+                ]
+            }
+        });
+    </script>
+</body>
+</html>
